@@ -29,11 +29,13 @@ Omni opens everything).
 
 ## Readers
 
-1. Stand in the **air block right next to the (iron) door**, with a **wall behind that block**,
-   and **face the direction the reader should point**.
+1. **Face the wall next to the door** (within ~8 blocks). The reader raycasts to that wall and
+   mounts on it, facing you.
 2. Run `/function keycard:place/level_1` … `level_5` (the required clearance).
-   - The reader snaps to the block grid, is rotated to face you, and gets: the 3D model, a
-     clickable hitbox, and a **hidden wall button** (the redstone output).
+   - It places the 3D model, a clickable hitbox, and a **hidden wall button** (the redstone
+     output) on the wall in front of you.
+   - For the door to open, the wall block the reader sits on must be **next to the iron door**
+     (the button powers that wall block, like any wall button).
 3. Step away and **right-click the reader with a keycard**.
    - Granted → the hidden button is pressed for ~1s (a real redstone pulse) → opens the wired
      door, with a green message + chime.

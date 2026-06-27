@@ -5,4 +5,4 @@ scoreboard objectives add kc.var2 dummy
 # Countdown timer for the button pulse
 scoreboard objectives add kc.timer dummy
 
-tellraw @a {"text":"[Keycards v0.2] Loaded. /function keycard:give/level_1 ... ,  /function keycard:place/level_1 ...","color":"aqua"}
+tellraw @a {"text":"[Keycards v0.3] Loaded. /function keycard:give/level_1 ... ,  /function keycard:place/level_1 ...","color":"aqua"}
