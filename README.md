@@ -4,8 +4,10 @@ Keycards and keycard readers for Minecraft — right-click a reader with a keyca
 enough clearance and it opens the door like a button (a short redstone pulse). Built for
 facility / SCP-style servers.
 
-> **v0.1** — works, but expect to fine-tune reader placement and the resource-pack model
-> hooks. Tested logic, not yet battle-tested in a live build.
+> **v0.2** — readers now snap to the block grid, face the way you're looking, and open doors
+> through a hidden **button** (a real redstone pulse). Logic is written but not yet live-tested;
+> expect to fine-tune model orientation and reader position. The card-swipe animation is not in
+> yet (see "Planned").
 
 ## Keycards
 
@@ -27,20 +29,25 @@ Omni opens everything).
 
 ## Readers
 
-1. Stand in the **air block right next to the (iron) door**, where the reader should be.
+1. Stand in the **air block right next to the (iron) door**, with a **wall behind that block**,
+   and **face the direction the reader should point**.
 2. Run `/function keycard:place/level_1` … `level_5` (the required clearance).
-   - This spawns a clickable hitbox + the reader 3D model at that spot.
+   - The reader snaps to the block grid, is rotated to face you, and gets: the 3D model, a
+     clickable hitbox, and a **hidden wall button** (the redstone output).
 3. Step away and **right-click the reader with a keycard**.
-   - Granted → a redstone pulse (~1.5s) opens the adjacent door, with a green message + chime.
-   - Denied → red message + buzz, nothing opens.
+   - Granted → the hidden button is pressed for ~1s (a real redstone pulse) → opens the wired
+     door, with a green message + chime.
+   - Denied → red message + buzz, nothing fires.
 
-Misplaced one? Stand near it and run `/function keycard:remove_readers` (clears readers within 5 blocks).
+Misplaced one? Stand near it and run `/function keycard:remove_readers` (clears readers within
+5 blocks; you may also need to break the leftover hidden button).
 
-### How the door opens
+### How the door opens (button, not a redstone block)
 
-On a granted read, the reader briefly turns its **own (air) block into a redstone block**, which
-powers the adjacent door, then turns it back to air — like a button press, and it never alters
-the door's own placement/state. So: put the reader in an empty block touching the iron door.
+The reader contains a real, hidden `stone_button` on the wall. A granted read sets it
+`powered=true` for ~1s and then back to `powered=false` — **exactly like pressing a button**, so
+it works with any redstone the builder wires up (iron doors, pistons, lamps…). It never alters
+the door's own state. Put the reader in an empty block touching the door (or its redstone).
 
 ## Resource pack (your 3D models)
 
@@ -54,8 +61,17 @@ Point your resource pack's item-model definitions at those ids (or, since each k
 unique base item, you can override the banner-pattern item models directly). If a model doesn't
 show, that's the hook to check — the datapack logic doesn't depend on the models.
 
-## Notes / known rough edges (v0.1)
+## Planned (not in yet)
 
-- Readers spawn at your position +1 block up; reposition by re-placing (`remove_readers` first).
-- Reader model orientation is default; align it in a later pass.
-- The reader's block must be **air** for the pulse to fire (so it can't damage your build).
+- **Card-swipe animation** — a keycard model sliding across the reader on a successful read.
+  Held back on purpose: it's cosmetic, needs your card models + live timing, and temporarily
+  removing/returning the real keycard risks item dupes. Will add as a visual-only swipe (no
+  inventory removal) once placement + redstone are confirmed in game.
+
+## Notes / known rough edges (v0.2)
+
+- Reader model orientation uses a basic Y-rotation per facing; the exact offset depends on how
+  your model is authored — expect to tweak the quaternions in `place/build.mcfunction`.
+- The reader/button block must be **air** with a **solid wall behind it** (so the button has
+  support and can't damage your build).
+- Reposition by `remove_readers` then placing again (and break any leftover hidden button).
