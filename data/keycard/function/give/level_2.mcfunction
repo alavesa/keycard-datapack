@@ -1,0 +1,1 @@
+give @s minecraft:skull_banner_pattern[minecraft:custom_data={keycard:{lvl:2}},minecraft:item_name={text:"Keycard - Level 2",color:"green",italic:false},minecraft:custom_model_data={strings:["keycard_2"]}]

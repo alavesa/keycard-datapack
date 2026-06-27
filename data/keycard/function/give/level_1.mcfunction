@@ -1,0 +1,1 @@
+give @s minecraft:creeper_banner_pattern[minecraft:custom_data={keycard:{lvl:1}},minecraft:item_name={text:"Keycard - Level 1",color:"gray",italic:false},minecraft:custom_model_data={strings:["keycard_1"]}]

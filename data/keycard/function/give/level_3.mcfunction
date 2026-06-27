@@ -1,0 +1,1 @@
+give @s minecraft:mojang_banner_pattern[minecraft:custom_data={keycard:{lvl:3}},minecraft:item_name={text:"Keycard - Level 3",color:"aqua",italic:false},minecraft:custom_model_data={strings:["keycard_3"]}]

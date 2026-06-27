@@ -1,0 +1,1 @@
+give @s minecraft:flow_banner_pattern[minecraft:custom_data={keycard:{lvl:99}},minecraft:item_name={text:"Keycard - Omni",color:"light_purple",italic:false},minecraft:custom_model_data={strings:["keycard_omni"]}]

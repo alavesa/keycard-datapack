@@ -1,0 +1,1 @@
+give @s minecraft:piglin_banner_pattern[minecraft:custom_data={keycard:{lvl:5}},minecraft:item_name={text:"Keycard - Level 5",color:"red",italic:false},minecraft:custom_model_data={strings:["keycard_5"]}]

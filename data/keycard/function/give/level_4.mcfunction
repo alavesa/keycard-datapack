@@ -1,0 +1,1 @@
+give @s minecraft:globe_banner_pattern[minecraft:custom_data={keycard:{lvl:4}},minecraft:item_name={text:"Keycard - Level 4",color:"gold",italic:false},minecraft:custom_model_data={strings:["keycard_4"]}]
