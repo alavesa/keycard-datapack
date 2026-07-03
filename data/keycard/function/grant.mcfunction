@@ -3,6 +3,9 @@ playsound minecraft:block.note_block.pling player @a[distance=..24] ~ ~ ~ 0.7 1.
 particle minecraft:happy_villager ~ ~ ~ 0.3 0.3 0.3 0.05 8
 title @s actionbar {"text":"Access granted","color":"green"}
 
+# Visual card-swipe: a copy of the held card slides down the reader face (inventory untouched)
+function keycard:swipe
+
 # Press the reader's hidden wall button = a real redstone pulse, exactly like a button press.
 execute if score #dir kc.var matches 1 run setblock ~ ~ ~ minecraft:stone_button[face=wall,facing=south,powered=true]
 execute if score #dir kc.var matches 2 run setblock ~ ~ ~ minecraft:stone_button[face=wall,facing=west,powered=true]

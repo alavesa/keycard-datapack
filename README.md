@@ -4,10 +4,12 @@ Keycards and keycard readers for Minecraft — right-click a reader with a keyca
 enough clearance and it opens the door like a button (a short redstone pulse). Built for
 facility / SCP-style servers.
 
-> **v0.2** — readers now snap to the block grid, face the way you're looking, and open doors
-> through a hidden **button** (a real redstone pulse). Logic is written but not yet live-tested;
-> expect to fine-tune model orientation and reader position. The card-swipe animation is not in
-> yet (see "Planned").
+> **v0.4** — the card-swipe animation is in: on a granted read, a copy of the card you're
+> holding slides down the reader face (~0.4s) with a soft swish, then vanishes. Purely visual —
+> your inventory is never touched, so there is no dupe risk. Animation offsets are untested in
+> game; if the card floats off the reader surface, the numbers to tweak are the `0.31` (distance
+> from the wall) and `0.30`/`-0.20` (top/bottom of the slide) in `swipe.mcfunction` and
+> `tick.mcfunction`.
 
 ## Keycards
 
@@ -63,14 +65,14 @@ Point your resource pack's item-model definitions at those ids (or, since each k
 unique base item, you can override the banner-pattern item models directly). If a model doesn't
 show, that's the hook to check — the datapack logic doesn't depend on the models.
 
-## Planned (not in yet)
+## Card-swipe animation (v0.4)
 
-- **Card-swipe animation** — a keycard model sliding across the reader on a successful read.
-  Held back on purpose: it's cosmetic, needs your card models + live timing, and temporarily
-  removing/returning the real keycard risks item dupes. Will add as a visual-only swipe (no
-  inventory removal) once placement + redstone are confirmed in game.
+On a **granted** read the reader shows a swipe: an `item_display` copy of the exact card in
+your main hand (same model, via `SelectedItem`) appears at the top of the reader face and
+slides down it over 8 ticks, holds briefly, and despawns (~0.8s total). Denied reads show no
+swipe. The animation is visual-only — the real keycard never leaves your inventory.
 
-## Notes / known rough edges (v0.2)
+## Notes / known rough edges
 
 - Reader model orientation uses a basic Y-rotation per facing; the exact offset depends on how
   your model is authored — expect to tweak the quaternions in `place/build.mcfunction`.
