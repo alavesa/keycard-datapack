@@ -1,5 +1,6 @@
 # Runs AS a reader interaction entity, positioned AT it, after a right-click. Act once.
-data remove entity @s interaction
+# NOTE: the interaction data is removed at the END - "on target" below needs it to find
+# the player who actually clicked.
 
 # Required level -> #req
 scoreboard players set #req kc.var 0
@@ -15,5 +16,7 @@ execute if entity @s[tag=kc.dir2] run scoreboard players set #dir kc.var 2
 execute if entity @s[tag=kc.dir3] run scoreboard players set #dir kc.var 3
 execute if entity @s[tag=kc.dir4] run scoreboard players set #dir kc.var 4
 
-# Switch to the nearest player (the clicker), still positioned at the reader.
-execute as @p[distance=..4] run function keycard:check
+# Switch to the player who ACTUALLY clicked (not just the nearest one - matters in
+# multiplayer), still positioned at the reader. Then clear the click so we act once.
+execute on target run function keycard:check
+data remove entity @s interaction
