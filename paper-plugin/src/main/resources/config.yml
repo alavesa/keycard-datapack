@@ -1,0 +1,15 @@
+# Sounds are namespaced keys, so a resource pack's custom sounds work here too -
+# e.g. "keycards:reader.grant" if your pack defines it in sounds.json.
+sounds:
+  grant: "minecraft:block.note_block.bit"
+  grant-pitch: 1.8
+  deny: "minecraft:block.note_block.bass"
+  deny-pitch: 0.6
+  swipe: "minecraft:item.armor.equip_leather"
+  swipe-pitch: 1.4
+
+# How long a granted read keeps the door open, in ticks (20 = 1s)
+door-open-ticks: 30
+
+# Reader ignores clicks for this long after a handled read (anti-spam)
+cooldown-ms: 1500

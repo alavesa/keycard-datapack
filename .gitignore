@@ -3,3 +3,6 @@
 
 # build artifacts
 *.zip
+
+# plugin build output
+paper-plugin/target/

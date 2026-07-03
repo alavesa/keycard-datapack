@@ -1,0 +1,15 @@
+name: Keycards
+version: '0.8.0'
+main: fi.alavesa.keycards.KeycardsPlugin
+api-version: '1.21'
+author: Piia Alavesa
+description: Companion plugin for the Keycards datapack (readers, doors, card menu, swipe animation).
+commands:
+  keycards:
+    description: Open the keycard menu
+    usage: /keycards
+    aliases: [kc]
+permissions:
+  keycards.menu:
+    description: Open the keycard menu
+    default: true
