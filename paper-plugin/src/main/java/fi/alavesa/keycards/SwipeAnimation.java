@@ -39,33 +39,42 @@ public final class SwipeAnimation {
         player.getInventory().setItem(slot, null);
 
         Location center = reader.getLocation().getBlock().getLocation().add(0.5, 0.5, 0.5);
-        // Tag is "kcp.swipe", NOT the datapack-era "kc.swipe": old datapack versions
-        // (<= v0.7) still enabled in the world kill any kc.swipe display on sight, which
-        // made the animation invisible while everything else worked.
-        ItemDisplay display = reader.getWorld().spawn(center, ItemDisplay.class, d -> {
-            d.setItemStack(shown);
-            d.setBillboard(Display.Billboard.FIXED);
-            d.setTransformation(transform(dir, 0.30f));
-            d.addScoreboardTag("kcp.swipe");
-        });
+        boolean debug = plugin.getConfig().getBoolean("debug", true);
 
-        // One tick later the client has the start pose; then interpolate down over 8 ticks
+        // Spawn one tick AFTER the interact event (spawning inside the cancelled-interact
+        // handler is the prime suspect for the display never reaching clients). Tag is
+        // "kcp.swipe" so no datapack version, old or new, can touch it.
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            if (!display.isValid()) {
-                plugin.getLogger().warning("Swipe display was removed externally - is an old"
-                    + " Keycards datapack version (<= v0.7) still enabled? Run /datapack list.");
-                return;
-            }
-            display.setInterpolationDelay(0);
-            display.setInterpolationDuration(8);
-            display.setTransformation(transform(dir, -0.20f));
-        }, 2L);
+            ItemDisplay display = reader.getWorld().spawn(center, ItemDisplay.class, d -> {
+                d.setItemStack(shown);
+                d.setBillboard(Display.Billboard.FIXED);
+                d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
+                d.setTransformation(transform(dir, 0.30f));
+                d.addScoreboardTag("kcp.swipe");
+            });
 
-        // End of animation: remove the visual, give the card back
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            display.remove();
-            returnCard(player);
-        }, 16L);
+            // One tick later the client has the start pose; then interpolate down over 8 ticks
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                if (debug) {
+                    plugin.getLogger().info("[swipe] display valid=" + display.isValid()
+                        + " trackedBy=" + display.getTrackedBy().size() + " players, item="
+                        + display.getItemStack().getType() + ", at " + display.getLocation().toVector());
+                }
+                if (!display.isValid()) {
+                    plugin.getLogger().warning("[swipe] display was removed externally within 1 tick!");
+                    return;
+                }
+                display.setInterpolationDelay(0);
+                display.setInterpolationDuration(8);
+                display.setTransformation(transform(dir, -0.20f));
+            }, 1L);
+
+            // End of animation: remove the visual, give the card back
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                display.remove();
+                returnCard(player);
+            }, 15L);
+        }, 1L);
     }
 
     /** Give a pending card back (no-op if none). Safe to call from quit/death/disable hooks. */

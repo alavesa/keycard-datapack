@@ -13,3 +13,6 @@ door-open-ticks: 30
 
 # Reader ignores clicks for this long after a handled read (anti-spam)
 cooldown-ms: 1500
+
+# Log swipe-animation diagnostics to the console (helps debugging; set false when all works)
+debug: true

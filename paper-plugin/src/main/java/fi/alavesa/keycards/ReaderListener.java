@@ -84,6 +84,9 @@ public final class ReaderListener implements Listener {
         playConfigSound(reader.getLocation(), "deny");
     }
 
+    private static final BlockFace[] HORIZONTAL =
+        {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
+
     /** Open every iron door touching the reader block or the wall block behind it, then close it. */
     private void openDoors(Interaction reader, int dir) {
         Block readerBlock = reader.getLocation().getBlock();
@@ -91,10 +94,28 @@ public final class ReaderListener implements Listener {
 
         Set<Block> doorBottoms = new LinkedHashSet<>();
         for (Block base : new Block[]{readerBlock, wallBlock}) {
-            for (BlockFace face : new BlockFace[]{BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST}) {
-                // Reader sits at eye height, so the door's halves are at this Y and below it
+            for (BlockFace face : HORIZONTAL) {
+                // Reader sits at eye height; check this Y and up to two below (door halves)
                 collectDoor(doorBottoms, base.getRelative(face));
                 collectDoor(doorBottoms, base.getRelative(face).getRelative(BlockFace.DOWN));
+                collectDoor(doorBottoms, base.getRelative(face).getRelative(0, -2, 0));
+            }
+        }
+
+        // Double doors: the OTHER leaf sits one block further and never touches the reader
+        // or its wall, so expand every found door with its mirrored pair (same facing,
+        // opposite hinge) before opening.
+        for (Block bottom : doorBottoms.toArray(new Block[0])) {
+            Door door = (Door) bottom.getBlockData();
+            for (BlockFace face : HORIZONTAL) {
+                Block other = bottom.getRelative(face);
+                if (other.getType() != Material.IRON_DOOR) continue;
+                Door otherDoor = (Door) other.getBlockData();
+                if (otherDoor.getHalf() == Bisected.Half.BOTTOM
+                        && otherDoor.getFacing() == door.getFacing()
+                        && otherDoor.getHinge() != door.getHinge()) {
+                    doorBottoms.add(other);
+                }
             }
         }
 
