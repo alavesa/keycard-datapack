@@ -4,10 +4,11 @@ Keycards and keycard readers for Minecraft — right-click a reader with a keyca
 enough clearance and it opens the door like a button (a short redstone pulse). Built for
 facility / SCP-style servers.
 
-> **v0.6** — the pulse is now a real **redstone block** in the reader block for ~1s: it powers
-> and updates ALL six blocks around the reader (a command-"pressed" button couldn't reliably
-> power anything — engine limitation). Also new: a **1.5s anti-spam cooldown** per reader, and
-> the villager particles are gone.
+> **v0.7** — the redstone pulse is now **hidden inside the wall**: for ~1s the wall block the
+> reader is mounted on becomes a redstone block (the original wall is buffered and restored
+> automatically — furnaces/chests included). Nothing appears in mid-air anymore, and wiring is
+> the natural way: **the door/redstone must touch the WALL block the reader sits on** — the
+> far side of the wall works too.
 
 ## Keycards
 
@@ -34,13 +35,12 @@ Omni opens everything).
 2. Run `/function keycard:place/level_1` … `level_5` (the required clearance).
    - It places the 3D model, a clickable hitbox, and a **hidden wall button** (the redstone
      output) on the wall in front of you.
-   - **The iron door (or your redstone dust) must directly touch the reader block itself** —
-     the block the reader model sits in. Touching only the wall behind it is NOT enough (see
-     the wiring section below for why). Easiest layout: mount the reader on the wall right
-     beside the doorway, at the door's upper-half height.
+   - **The iron door (or your redstone dust) must directly touch the WALL block the reader
+     is mounted on** — mount the reader on the wall right beside the doorway. Redstone on the
+     far side of that wall block works too (hidden wiring, like a real reader).
 3. Step away and **right-click the reader with a keycard**.
-   - Granted → the reader block becomes a redstone block for ~1s (powers everything touching
-     it) → opens the wired door, with a green message + chime and a red glow on the reader.
+   - Granted → the wall block behind the reader becomes a hidden redstone block for ~1s
+     (original wall restored automatically) → opens the wired door, green message + chime.
    - Denied → red message + buzz, nothing fires.
    - Either way the reader then ignores clicks for **1.5s** (anti-spam cooldown).
 
@@ -53,17 +53,24 @@ Misplaced one? Stand near it and run `/function keycard:remove_readers` (clears 
 
 ### How the door opens — and the one wiring rule
 
-A granted read swaps the reader block into a real `minecraft:redstone_block` for ~1s, then
-restores the hidden button. A redstone block powers **all six blocks touching it** with proper
-block updates — doors, dust, pistons, lamps all react, and the door's own state is never
-touched.
+A granted read swaps the **wall block behind the reader** into a real `minecraft:redstone_block`
+for ~1s. The original wall block is copied to a buffer at **y=319 in the same column** first
+and cloned back when the pulse ends — any block, chests and furnaces included, comes back
+exactly as it was. A redstone block powers all six blocks touching it with proper updates, so
+doors, dust, pistons and lamps touching the wall block all react — including on the far side
+of the wall. The door's own state is never touched.
 
-**The rule: whatever should react (door, dust, piston…) must be directly adjacent to the
-reader block.** Power still does not travel through the wall behind the reader — if you need
-redstone further away, put a dust/repeater in a block touching the reader and wire on from
-there. (Earlier versions "pressed" the hidden button by command; that never worked, because a
-command-set button state doesn't update its neighbors the way a hand-press does. The hidden
-button remains as a manual override — hand-pressing it still works like any wall button.)
+**The rule: whatever should react (door, dust, piston…) must be directly adjacent to the wall
+block the reader is mounted on.** The hidden button also remains as a manual override —
+hand-pressing it works like any wall button.
+
+Honest limitations of the wall-swap:
+- If the wall's far side is visible (a 1-block wall between rooms), that block face flashes
+  red for ~1s during a pulse. Cosmetic; use a 2-thick wall there if it bothers you.
+- The buffer lives at y=319 in the wall's column — don't build at y=319 directly above a
+  reader wall, and two readers mounted on the same x/z column can conflict if swiped in the
+  same second.
+- Designed for the Overworld (y=319 doesn't exist in the Nether/End).
 
 ## Resource pack (your 3D models)
 
