@@ -1,5 +1,5 @@
 name: Keycards
-version: '0.8.0'
+version: '0.8.1'
 main: fi.alavesa.keycards.KeycardsPlugin
 api-version: '1.21'
 author: Piia Alavesa

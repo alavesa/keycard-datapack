@@ -39,16 +39,23 @@ public final class SwipeAnimation {
         player.getInventory().setItem(slot, null);
 
         Location center = reader.getLocation().getBlock().getLocation().add(0.5, 0.5, 0.5);
+        // Tag is "kcp.swipe", NOT the datapack-era "kc.swipe": old datapack versions
+        // (<= v0.7) still enabled in the world kill any kc.swipe display on sight, which
+        // made the animation invisible while everything else worked.
         ItemDisplay display = reader.getWorld().spawn(center, ItemDisplay.class, d -> {
             d.setItemStack(shown);
             d.setBillboard(Display.Billboard.FIXED);
             d.setTransformation(transform(dir, 0.30f));
-            d.addScoreboardTag("kc.swipe");
+            d.addScoreboardTag("kcp.swipe");
         });
 
         // One tick later the client has the start pose; then interpolate down over 8 ticks
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            if (!display.isValid()) return;
+            if (!display.isValid()) {
+                plugin.getLogger().warning("Swipe display was removed externally - is an old"
+                    + " Keycards datapack version (<= v0.7) still enabled? Run /datapack list.");
+                return;
+            }
             display.setInterpolationDelay(0);
             display.setInterpolationDuration(8);
             display.setTransformation(transform(dir, -0.20f));
