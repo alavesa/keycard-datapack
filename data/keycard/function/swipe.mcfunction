@@ -3,6 +3,11 @@
 # and slides down it (tick.mcfunction drives the interpolation), then vanishes.
 # The player's inventory is never touched - no removal, no dupe risk.
 
+# Rapid re-swipes: kill any swipe still playing at THIS reader (they all sit at the block
+# center, so distance 0.5 never touches another reader's swipe). The animation restarts
+# cleanly instead of stacking copies on top of each other.
+kill @e[type=item_display,tag=kc.swipe,distance=..0.5]
+
 # Spawn the card just in front of the reader face (0.31 out toward the player), rotated to
 # match the reader. dir: 1=south 2=west 3=north 4=east (same as the reader model).
 execute if score #dir kc.var matches 1 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.swipe","kc.newswipe"],item:{id:"minecraft:paper",count:1},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.30f,0.31f],scale:[0.4f,0.4f,0.4f]},billboard:"fixed"}

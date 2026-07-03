@@ -12,8 +12,9 @@ execute if score #dir kc.var matches 2 run setblock ~ ~ ~ minecraft:stone_button
 execute if score #dir kc.var matches 3 run setblock ~ ~ ~ minecraft:stone_button[face=wall,facing=north,powered=true]
 execute if score #dir kc.var matches 4 run setblock ~ ~ ~ minecraft:stone_button[face=wall,facing=east,powered=true]
 
-# Release the button after ~1s. A marker remembers its facing (kc.var2) so tick can un-press it.
-summon minecraft:marker ~ ~ ~ {Tags:["kc.pulse","kc.new"]}
-scoreboard players operation @e[type=marker,tag=kc.new] kc.var2 = #dir kc.var
-scoreboard players set @e[type=marker,tag=kc.new] kc.timer 20
-tag @e[type=marker,tag=kc.new] remove kc.new
+# Release the button after ~1s. A marker remembers its facing (kc.var2) so tick can un-press
+# it. Rapid re-swipes REUSE the marker already at this reader (just reset its timer) - two
+# stacked markers would release the button early when the first one expired.
+execute unless entity @e[type=marker,tag=kc.pulse,distance=..0.5] run summon minecraft:marker ~ ~ ~ {Tags:["kc.pulse"]}
+scoreboard players operation @e[type=marker,tag=kc.pulse,distance=..0.5] kc.var2 = #dir kc.var
+scoreboard players set @e[type=marker,tag=kc.pulse,distance=..0.5] kc.timer 20
