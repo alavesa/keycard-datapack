@@ -4,5 +4,7 @@ scoreboard objectives add kc.var dummy
 scoreboard objectives add kc.var2 dummy
 # Countdown timer for the button pulse
 scoreboard objectives add kc.timer dummy
+# Per-reader anti-spam cooldown (ticks left until the reader accepts the next click)
+scoreboard objectives add kc.cool dummy
 
-tellraw @a {"text":"[Keycards v0.5] Loaded. give/level_1..5, place/level_1..5, test (fires the nearest reader without a card)","color":"aqua"}
+tellraw @a {"text":"[Keycards v0.6] Loaded. give/level_1..5, place/level_1..5, test (fires the nearest reader without a card)","color":"aqua"}

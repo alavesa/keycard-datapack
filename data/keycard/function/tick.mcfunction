@@ -1,6 +1,9 @@
 # 1) Any reader that was just right-clicked? Run its logic (positioned AT the reader).
 execute as @e[type=interaction,tag=kc.reader] at @s if data entity @s interaction run function keycard:reader_click
 
+# 1b) Tick down reader cooldowns (anti-spam)
+scoreboard players remove @e[type=interaction,tag=kc.reader,scores={kc.cool=1..}] kc.cool 1
+
 # 2) Release expired button pulses (un-press the hidden wall button, facing from kc.var2).
 scoreboard players remove @e[type=marker,tag=kc.pulse] kc.timer 1
 execute as @e[type=marker,tag=kc.pulse,scores={kc.timer=..0}] at @s if score @s kc.var2 matches 1 run setblock ~ ~ ~ minecraft:stone_button[face=wall,facing=south,powered=false]
