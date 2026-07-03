@@ -11,10 +11,7 @@ execute if entity @s[tag=kc.req4] run scoreboard players set #req kc.var 4
 execute if entity @s[tag=kc.req5] run scoreboard players set #req kc.var 5
 
 # Facing -> #dir (so grant/tick can press/release the right-facing button)
-scoreboard players set #dir kc.var 1
-execute if entity @s[tag=kc.dir2] run scoreboard players set #dir kc.var 2
-execute if entity @s[tag=kc.dir3] run scoreboard players set #dir kc.var 3
-execute if entity @s[tag=kc.dir4] run scoreboard players set #dir kc.var 4
+function keycard:read_dir
 
 # Switch to the player who ACTUALLY clicked (not just the nearest one - matters in
 # multiplayer), still positioned at the reader. Then clear the click so we act once.

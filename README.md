@@ -4,12 +4,9 @@ Keycards and keycard readers for Minecraft — right-click a reader with a keyca
 enough clearance and it opens the door like a button (a short redstone pulse). Built for
 facility / SCP-style servers.
 
-> **v0.4** — the card-swipe animation is in: on a granted read, a copy of the card you're
-> holding slides down the reader face (~0.4s) with a soft swish, then vanishes. Purely visual —
-> your inventory is never touched, so there is no dupe risk. Animation offsets are untested in
-> game; if the card floats off the reader surface, the numbers to tweak are the `0.31` (distance
-> from the wall) and `0.30`/`-0.20` (top/bottom of the slide) in `swipe.mcfunction` and
-> `tick.mcfunction`.
+> **v0.5** — documented the one wiring rule (the door/redstone must touch the READER block —
+> a command-pressed button can't push power through the wall; that's a Minecraft engine
+> limitation) and added `/function keycard:test` to fire the nearest reader without a card.
 
 ## Keycards
 
@@ -36,22 +33,33 @@ Omni opens everything).
 2. Run `/function keycard:place/level_1` … `level_5` (the required clearance).
    - It places the 3D model, a clickable hitbox, and a **hidden wall button** (the redstone
      output) on the wall in front of you.
-   - For the door to open, the wall block the reader sits on must be **next to the iron door**
-     (the button powers that wall block, like any wall button).
+   - **The iron door (or your redstone dust) must directly touch the reader block itself** —
+     the block the reader model sits in. Touching only the wall behind it is NOT enough (see
+     the wiring section below for why). Easiest layout: mount the reader on the wall right
+     beside the doorway, at the door's upper-half height.
 3. Step away and **right-click the reader with a keycard**.
    - Granted → the hidden button is pressed for ~1s (a real redstone pulse) → opens the wired
      door, with a green message + chime.
    - Denied → red message + buzz, nothing fires.
 
+**Test the wiring without a card:** stand near the reader and run `/function keycard:test` —
+it fires the pulse of the nearest reader as if a card had been granted. If the door doesn't
+open on a test pulse, the door isn't touching the reader block.
+
 Misplaced one? Stand near it and run `/function keycard:remove_readers` (clears readers within
 5 blocks; you may also need to break the leftover hidden button).
 
-### How the door opens (button, not a redstone block)
+### How the door opens — and the one wiring rule
 
-The reader contains a real, hidden `stone_button` on the wall. A granted read sets it
-`powered=true` for ~1s and then back to `powered=false` — **exactly like pressing a button**, so
-it works with any redstone the builder wires up (iron doors, pistons, lamps…). It never alters
-the door's own state. Put the reader in an empty block touching the door (or its redstone).
+The reader contains a real, hidden `stone_button`. A granted read sets it `powered=true` for
+~1s and back — a real redstone pulse that never alters the door's own state.
+
+**The rule: whatever should react (door, dust, piston…) must be directly adjacent to the
+reader block.** This is a Minecraft engine limitation, not a choice: a button pressed *by
+hand* also pushes power through the wall it's mounted on, but a button whose state is set *by
+command* only updates its own neighbors — components behind the wall never hear about the
+pulse. (Confusingly, hand-pressing the hidden button WILL open a door behind the wall — so if
+hand-press works but the card doesn't, this rule is what you're hitting.)
 
 ## Resource pack (your 3D models)
 
