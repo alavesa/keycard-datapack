@@ -10,6 +10,6 @@ commands:
     usage: /keycards
     aliases: [kc]
 permissions:
-  keycards.menu:
-    description: Open the keycard menu
-    default: true
+  keycards.admin:
+    description: Open the keycard menu and grant cards of any clearance level
+    default: op

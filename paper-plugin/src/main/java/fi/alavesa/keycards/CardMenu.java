@@ -38,6 +38,7 @@ public final class CardMenu implements Listener {
         if (!(event.getView().getTopInventory().getHolder() instanceof Holder)) return;
         event.setCancelled(true);
         if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (!player.hasPermission("keycards.admin")) return;
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || clicked.getType().isAir()) return;
         int level = Cards.levelOf(clicked);

@@ -1,5 +1,7 @@
 package fi.alavesa.keycards;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,6 +27,10 @@ public final class KeycardsPlugin extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("Players only.");
+            return true;
+        }
+        if (!player.hasPermission("keycards.admin")) {
+            player.sendMessage(Component.text("You do not have permission.", NamedTextColor.RED));
             return true;
         }
         CardMenu.open(player);
