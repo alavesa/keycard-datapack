@@ -1,5 +1,7 @@
 # Keycards — datapack + Paper plugin
 
+[![Reviewed by PatchPilots](https://img.shields.io/badge/Reviewed%20by-PatchPilots-8A2BE2)](https://github.com/alavesa/patchpilots)
+
 Keycards and keycard readers for Minecraft — right-click a reader with a keycard of high
 enough clearance and the door opens. Built for facility / SCP-style servers.
 
