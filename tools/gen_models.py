@@ -107,6 +107,19 @@ for name in list(LIGHTS) + ["plain"]:
                   "model": {"type": "minecraft:model",
                             "model": "keycard:entity/" + model_id}})
 
+# item DEFINITIONS for the item_model component (assets/keycard/items/):
+# the datapack stamps item_model=keycard:reader_<n> onto each display, which
+# resolves through these regardless of what any other pack does to paper.json
+items_dir = os.path.join(root, "keycard", "items")
+os.makedirs(items_dir, exist_ok=True)
+for name in list(LIGHTS) + ["plain"]:
+    model_id = "keycard_reader_" + name if name != "plain" else "keycard_reader"
+    def_id = "reader_" + name if name != "plain" else "reader"
+    with open(os.path.join(items_dir, def_id + ".json"), "w") as f:
+        json.dump({"model": {"type": "minecraft:model",
+                             "model": "keycard:entity/" + model_id}}, f, indent=2)
+    print(os.path.join(items_dir, def_id + ".json"))
+
 # dispatch on paper - merged with the ID card's paper.json at pack build time
 dispatch_dir = os.path.join(root, "minecraft", "items")
 os.makedirs(dispatch_dir, exist_ok=True)

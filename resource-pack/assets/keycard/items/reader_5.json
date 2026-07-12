@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "keycard:entity/keycard_reader_5"
+  }
+}
