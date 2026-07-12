@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
-"""Keycard models + textures for the scp_and_chemistry pack.
+"""Keycard READER models for the scp_and_chemistry pack.
 
-The datapack's give-functions and the paper-plugin already stamp every card
-with a custom_model_data string (keycard_1 ... keycard_5, keycard_omni);
-this script provides the other half: one 16x16 card texture per level, the
-item models, and the dispatch files that hook them onto the banner-pattern
-base items (with vanilla fallbacks, so ordinary banner patterns stay
-untouched).
+The cards themselves stay vanilla banner patterns (by request) - what gets a
+custom look is the wall-mounted reader: an SCP:CB-style panel with a status
+light colored by the required level, so a glance tells you what card a door
+wants. Levels 1-5 plus the omni tier, and a plain gray model for readers
+placed before levels were stamped on the display.
+
+Textures live in textures/block/ (auto-stitched into the blocks atlas - no
+atlas registration needed). The datapack writes keycard_reader_<n> onto each
+reader's item display; the dispatch here rides minecraft:paper together with
+the ID cards - the pack build merges the cases.
 
 Run from the repo root:  python3 tools/gen_models.py
 """
 import json, os, struct, zlib
 
-# level -> (band color, base item)  - colors follow the item_name colors
-CARDS = {
-    "keycard_1":    ((168, 168, 172), "creeper_banner_pattern"),
-    "keycard_2":    ((92, 190, 92),   "skull_banner_pattern"),
-    "keycard_3":    ((80, 200, 220),  "mojang_banner_pattern"),
-    "keycard_4":    ((248, 176, 40),  "globe_banner_pattern"),
-    "keycard_5":    ((212, 62, 62),   "piglin_banner_pattern"),
-    "keycard_omni": (None,            "flow_banner_pattern"),  # rainbow band
+LIGHTS = {
+    "1":    (168, 168, 172),
+    "2":    (92, 190, 92),
+    "3":    (80, 200, 220),
+    "4":    (248, 176, 40),
+    "5":    (212, 62, 62),
+    "omni": None,  # rainbow
 }
 RAINBOW = [(212, 62, 62), (248, 176, 40), (240, 224, 70),
            (92, 190, 92), (80, 200, 220), (190, 110, 230)]
-BODY = (232, 233, 238, 255)
-EDGE = (60, 62, 70, 255)
-CHIP = (208, 172, 60, 255)
 
 def png(path, px):
     h, w = len(px), len(px[0])
@@ -40,50 +40,81 @@ def png(path, px):
         f.write(data)
     print(path)
 
-def card(band, level):
-    px = [[(0, 0, 0, 0)] * 16 for _ in range(16)]
-    for y in range(3, 13):                      # card body, portrait-ish
-        for x in range(2, 14):
-            px[y][x] = BODY
-    for x in range(2, 14):                      # outline
-        px[3][x] = px[12][x] = EDGE
-    for y in range(3, 13):
-        px[y][2] = px[y][13] = EDGE
-    px[3][2] = px[3][13] = px[12][2] = px[12][13] = (0, 0, 0, 0)  # rounded corners
-    for y in (4, 5):                            # the colored band
-        for x in range(3, 13):
-            color = band if band else RAINBOW[(x - 3) * len(RAINBOW) // 10]
-            px[y][x] = tuple(color) + (255,)
-    for y in (7, 8):                            # chip
-        for x in (4, 5):
-            px[y][x] = CHIP
-    pips = 6 if level == 99 else level          # level pips along the bottom
-    color = tuple(band) + (255,) if band else (90, 90, 100, 255)
-    for i in range(min(pips, 6)):
-        px[10][4 + i * (1 if pips > 4 else 2)] = color
-    return px
-
 root = os.path.join(os.path.dirname(__file__), "..", "resource-pack", "assets")
-LEVELS = {"keycard_1": 1, "keycard_2": 2, "keycard_3": 3,
-          "keycard_4": 4, "keycard_5": 5, "keycard_omni": 99}
+tex = os.path.join(root, "keycard", "textures", "block")
 
-for name, (band, base) in CARDS.items():
-    png(os.path.join(root, "keycard", "textures", "item", name + ".png"),
-        card(band, LEVELS[name]))
-    model_dir = os.path.join(root, "keycard", "models", "item")
-    os.makedirs(model_dir, exist_ok=True)
-    with open(os.path.join(model_dir, name + ".json"), "w") as f:
-        json.dump({"parent": "minecraft:item/generated",
-                   "textures": {"layer0": "keycard:item/" + name}}, f, indent=2)
-    dispatch_dir = os.path.join(root, "minecraft", "items")
-    os.makedirs(dispatch_dir, exist_ok=True)
-    with open(os.path.join(dispatch_dir, base + ".json"), "w") as f:
-        json.dump({"model": {
-            "type": "minecraft:select",
-            "property": "minecraft:custom_model_data",
-            "cases": [{"when": name,
-                       "model": {"type": "minecraft:model",
-                                 "model": "keycard:item/" + name}}],
-            "fallback": {"type": "minecraft:model",
-                         "model": "minecraft:item/" + base}}}, f, indent=2)
-print("models + dispatches done")
+# the shared case: brushed dark metal with a beveled edge
+case = [[(52, 55, 60, 255)] * 16 for _ in range(16)]
+for i in range(16):
+    case[0][i] = case[15][i] = (74, 78, 84, 255)
+    case[i][0] = case[i][15] = (74, 78, 84, 255)
+for y in range(3, 13, 3):
+    for x in range(2, 14):
+        case[y][x] = (46, 49, 54, 255)
+png(os.path.join(tex, "reader_case.png"), case)
+png(os.path.join(tex, "reader_dark.png"), [[(24, 26, 30, 255)] * 16 for _ in range(16)])
+
+# one light texture per tier (16x16 solid glow; omni = rainbow bands)
+for name, color in LIGHTS.items():
+    if color:
+        light = [[tuple(color) + (255,)] * 16 for _ in range(16)]
+    else:
+        light = [[tuple(RAINBOW[x * len(RAINBOW) // 16]) + (255,) for x in range(16)]
+                 for _ in range(16)]
+    png(os.path.join(tex, f"reader_light_{name}.png"), light)
+png(os.path.join(tex, "reader_light_plain.png"), [[(140, 144, 150, 255)] * 16 for _ in range(16)])
+
+# the reader: a wall panel (wall at north, face toward the player at south)
+def reader_model(light):
+    return {
+        "textures": {
+            "particle": "keycard:block/reader_case",
+            "case": "keycard:block/reader_case",
+            "dark": "keycard:block/reader_dark",
+            "light": f"keycard:block/reader_light_{light}",
+        },
+        "elements": [
+            {  # body
+                "from": [5, 3, 0], "to": [11, 13, 2],
+                "faces": {f: {"texture": "#case"} for f in
+                          ("north", "south", "east", "west", "up", "down")}
+            },
+            {  # status light near the top of the face
+                "from": [6, 10.5, 2], "to": [10, 12, 2.6],
+                "shade": False,
+                "faces": {f: {"texture": "#light"} for f in
+                          ("south", "east", "west", "up", "down")}
+            },
+            {  # swipe slot
+                "from": [6.5, 4.5, 2], "to": [9.5, 5.5, 2.4],
+                "faces": {f: {"texture": "#dark"} for f in
+                          ("south", "east", "west", "up", "down")}
+            },
+        ],
+        "display": {"fixed": {"rotation": [0, 0, 0], "translation": [0, 0, 0],
+                              "scale": [1, 1, 1]}}
+    }
+
+models = os.path.join(root, "keycard", "models", "entity")
+os.makedirs(models, exist_ok=True)
+cases = []
+for name in list(LIGHTS) + ["plain"]:
+    model_id = "keycard_reader_" + name if name != "plain" else "keycard_reader"
+    with open(os.path.join(models, model_id + ".json"), "w") as f:
+        json.dump(reader_model(name), f, indent=2)
+    print(os.path.join(models, model_id + ".json"))
+    cases.append({"when": model_id,
+                  "model": {"type": "minecraft:model",
+                            "model": "keycard:entity/" + model_id}})
+
+# dispatch on paper - merged with the ID card's paper.json at pack build time
+dispatch_dir = os.path.join(root, "minecraft", "items")
+os.makedirs(dispatch_dir, exist_ok=True)
+with open(os.path.join(dispatch_dir, "paper.json"), "w") as f:
+    json.dump({"model": {
+        "type": "minecraft:select",
+        "property": "minecraft:custom_model_data",
+        "cases": cases,
+        "fallback": {"type": "minecraft:model", "model": "minecraft:item/paper"}}},
+        f, indent=2)
+print("dispatch + models done")

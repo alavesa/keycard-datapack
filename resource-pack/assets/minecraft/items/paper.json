@@ -1,0 +1,61 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "cases": [
+      {
+        "when": "keycard_reader_1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "keycard:entity/keycard_reader_1"
+        }
+      },
+      {
+        "when": "keycard_reader_2",
+        "model": {
+          "type": "minecraft:model",
+          "model": "keycard:entity/keycard_reader_2"
+        }
+      },
+      {
+        "when": "keycard_reader_3",
+        "model": {
+          "type": "minecraft:model",
+          "model": "keycard:entity/keycard_reader_3"
+        }
+      },
+      {
+        "when": "keycard_reader_4",
+        "model": {
+          "type": "minecraft:model",
+          "model": "keycard:entity/keycard_reader_4"
+        }
+      },
+      {
+        "when": "keycard_reader_5",
+        "model": {
+          "type": "minecraft:model",
+          "model": "keycard:entity/keycard_reader_5"
+        }
+      },
+      {
+        "when": "keycard_reader_omni",
+        "model": {
+          "type": "minecraft:model",
+          "model": "keycard:entity/keycard_reader_omni"
+        }
+      },
+      {
+        "when": "keycard_reader",
+        "model": {
+          "type": "minecraft:model",
+          "model": "keycard:entity/keycard_reader"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/paper"
+    }
+  }
+}

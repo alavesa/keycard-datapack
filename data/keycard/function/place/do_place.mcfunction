@@ -12,16 +12,16 @@ execute if score #yaw kc.var matches -180..-135 run scoreboard players set #dir 
 execute if score #yaw kc.var matches -134..-45 run scoreboard players set #dir kc.var 2
 
 # dir 1 = faces south
-execute if score #dir kc.var matches 1 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
+execute if score #dir kc.var matches 1 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model","kc.newdisp"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
 execute if score #dir kc.var matches 1 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:interaction ~ ~ ~ {Tags:["kc.reader","kc.dir1","kc.newint"],width:0.8f,height:0.8f,response:1b}
 # dir 2 = faces west
-execute if score #dir kc.var matches 2 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,0.7071f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
+execute if score #dir kc.var matches 2 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model","kc.newdisp"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,0.7071f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
 execute if score #dir kc.var matches 2 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:interaction ~ ~ ~ {Tags:["kc.reader","kc.dir2","kc.newint"],width:0.8f,height:0.8f,response:1b}
 # dir 3 = faces north
-execute if score #dir kc.var matches 3 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,1f,0f,0f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
+execute if score #dir kc.var matches 3 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model","kc.newdisp"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,1f,0f,0f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
 execute if score #dir kc.var matches 3 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:interaction ~ ~ ~ {Tags:["kc.reader","kc.dir3","kc.newint"],width:0.8f,height:0.8f,response:1b}
 # dir 4 = faces east
-execute if score #dir kc.var matches 4 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,-0.7071f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
+execute if score #dir kc.var matches 4 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:item_display ~ ~ ~ {Tags:["kc.reader","kc.reader_model","kc.newdisp"],item:{id:"minecraft:paper",count:1,components:{"minecraft:custom_model_data":{strings:["keycard_reader"]}}},transformation:{left_rotation:[0f,-0.7071f,0f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:"fixed"}
 execute if score #dir kc.var matches 4 align xyz positioned ~0.5 ~0.5 ~0.5 run summon minecraft:interaction ~ ~ ~ {Tags:["kc.reader","kc.dir4","kc.newint"],width:0.8f,height:0.8f,response:1b}
 
 # Tag the new reader with its required level (from #reqp)
@@ -30,6 +30,17 @@ execute if score #reqp kc.var matches 2 run tag @e[type=interaction,tag=kc.newin
 execute if score #reqp kc.var matches 3 run tag @e[type=interaction,tag=kc.newint] add kc.req3
 execute if score #reqp kc.var matches 4 run tag @e[type=interaction,tag=kc.newint] add kc.req4
 execute if score #reqp kc.var matches 5 run tag @e[type=interaction,tag=kc.newint] add kc.req5
+execute if score #reqp kc.var matches 99 run tag @e[type=interaction,tag=kc.newint] add kc.req99
 tag @e[type=interaction,tag=kc.newint] remove kc.newint
+
+# The model knows its level too: the status light's color comes from the
+# per-level custom_model_data string (keycard_reader_1..5 / _omni)
+execute if score #reqp kc.var matches 1 run data modify entity @e[type=item_display,tag=kc.newdisp,limit=1] item.components."minecraft:custom_model_data".strings[0] set value "keycard_reader_1"
+execute if score #reqp kc.var matches 2 run data modify entity @e[type=item_display,tag=kc.newdisp,limit=1] item.components."minecraft:custom_model_data".strings[0] set value "keycard_reader_2"
+execute if score #reqp kc.var matches 3 run data modify entity @e[type=item_display,tag=kc.newdisp,limit=1] item.components."minecraft:custom_model_data".strings[0] set value "keycard_reader_3"
+execute if score #reqp kc.var matches 4 run data modify entity @e[type=item_display,tag=kc.newdisp,limit=1] item.components."minecraft:custom_model_data".strings[0] set value "keycard_reader_4"
+execute if score #reqp kc.var matches 5 run data modify entity @e[type=item_display,tag=kc.newdisp,limit=1] item.components."minecraft:custom_model_data".strings[0] set value "keycard_reader_5"
+execute if score #reqp kc.var matches 99 run data modify entity @e[type=item_display,tag=kc.newdisp,limit=1] item.components."minecraft:custom_model_data".strings[0] set value "keycard_reader_omni"
+tag @e[type=item_display,tag=kc.newdisp] remove kc.newdisp
 
 tellraw @s {"text":"[Keycards] Reader mounted on the wall in front of you. Right-click it with a keycard.","color":"aqua"}
