@@ -60,6 +60,12 @@ public final class ReaderListener implements Listener {
         ItemStack hand = player.getInventory().getItemInMainHand();
         int level = Cards.levelOf(hand);
 
+        // other plugins (Doors) get first refusal - a cancelled event means
+        // the listener owned the whole interaction (e.g. "Door is locked")
+        KeycardSwipeEvent swipe = new KeycardSwipeEvent(player, reader, required, level, level >= required);
+        plugin.getServer().getPluginManager().callEvent(swipe);
+        if (swipe.isCancelled()) return;
+
         if (level >= required) {
             grant(player, reader, dir, hand);
         } else {
@@ -152,9 +158,15 @@ public final class ReaderListener implements Listener {
         };
     }
 
+    /** Parses e.g. kc.req3 / kc.req99 / kc.dir2 - any number after the prefix
+     *  (the old 1..5 loop silently read omni readers, kc.req99, as level 1). */
     private int tagNumber(Set<String> tags, String prefix, int fallback) {
-        for (int i = 1; i <= 5; i++) {
-            if (tags.contains(prefix + i)) return i;
+        for (String tag : tags) {
+            if (tag.startsWith(prefix)) {
+                try {
+                    return Integer.parseInt(tag.substring(prefix.length()));
+                } catch (NumberFormatException ignored) { }
+            }
         }
         return fallback;
     }

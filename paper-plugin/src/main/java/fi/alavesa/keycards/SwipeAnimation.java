@@ -117,11 +117,13 @@ public final class SwipeAnimation {
             case 4 -> new Vector3f(0.31f, y, 0f);
             default -> new Vector3f(0f, y, 0.31f);
         };
+        // +180 versus the reader's facing: the card's FACE points at the
+        // player standing in front of the reader, not away from them
         Quaternionf rotation = switch (dir) {
-            case 2 -> new Quaternionf().rotationY((float) Math.toRadians(90));
-            case 3 -> new Quaternionf().rotationY((float) Math.toRadians(180));
-            case 4 -> new Quaternionf().rotationY((float) Math.toRadians(-90));
-            default -> new Quaternionf();
+            case 2 -> new Quaternionf().rotationY((float) Math.toRadians(-90));
+            case 3 -> new Quaternionf();
+            case 4 -> new Quaternionf().rotationY((float) Math.toRadians(90));
+            default -> new Quaternionf().rotationY((float) Math.toRadians(180));
         };
         return new Transformation(translation, rotation, new Vector3f(0.4f, 0.4f, 0.4f), new Quaternionf());
     }
