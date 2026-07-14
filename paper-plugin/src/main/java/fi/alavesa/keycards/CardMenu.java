@@ -46,7 +46,7 @@ public final class CardMenu implements Listener {
             if (type.level() == level) {
                 player.getInventory().addItem(Cards.build(type)).values()
                     .forEach(left -> player.getWorld().dropItemNaturally(player.getLocation(), left));
-                player.sendActionBar(Component.text(type.display() + " added", NamedTextColor.AQUA));
+                Msg.actionbar(player, Component.text(type.display() + " added", NamedTextColor.AQUA));
                 return;
             }
         }

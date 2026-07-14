@@ -75,7 +75,7 @@ public final class ReaderListener implements Listener {
 
     private void grant(Player player, Interaction reader, int dir, ItemStack card) {
         Location loc = reader.getLocation();
-        player.sendActionBar(Component.text("Access granted", NamedTextColor.GREEN));
+        Msg.actionbar(player, Component.text("Access granted", NamedTextColor.GREEN));
         playConfigSound(loc, "grant");
         playConfigSound(loc, "swipe");
 
@@ -86,7 +86,7 @@ public final class ReaderListener implements Listener {
     }
 
     private void deny(Player player, Interaction reader) {
-        player.sendActionBar(Component.text("Access denied", NamedTextColor.RED));
+        Msg.actionbar(player, Component.text("Access denied", NamedTextColor.RED));
         playConfigSound(reader.getLocation(), "deny");
     }
 
