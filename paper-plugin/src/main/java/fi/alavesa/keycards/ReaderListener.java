@@ -59,6 +59,9 @@ public final class ReaderListener implements Listener {
         int dir = tagNumber(tags, "kc.dir", 1);
         ItemStack hand = player.getInventory().getItemInMainHand();
         int level = Cards.levelOf(hand);
+        // SCP-005, the Skeleton Key, held anywhere: opens any reader
+        boolean skeleton = holdsSkeletonKey(player);
+        if (skeleton) level = Integer.MAX_VALUE;
 
         // other plugins (Doors) get first refusal - a cancelled event means
         // the listener owned the whole interaction (e.g. "Door is locked")
@@ -160,6 +163,17 @@ public final class ReaderListener implements Listener {
 
     /** Parses e.g. kc.req3 / kc.req99 / kc.dir2 - any number after the prefix
      *  (the old 1..5 loop silently read omni readers, kc.req99, as level 1). */
+    /** SCP-005 anywhere in the inventory - the master key for every door. */
+    private boolean holdsSkeletonKey(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.hasItemMeta()
+                && item.getItemMeta().getCustomModelDataComponent().getStrings().contains("scp005")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private int tagNumber(Set<String> tags, String prefix, int fallback) {
         for (String tag : tags) {
             if (tag.startsWith(prefix)) {

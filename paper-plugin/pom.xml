@@ -6,7 +6,7 @@
 
   <groupId>fi.alavesa</groupId>
   <artifactId>keycards-plugin</artifactId>
-  <version>0.10.1</version>
+  <version>0.10.2</version>
   <packaging>jar</packaging>
 
   <name>Keycards</name>
