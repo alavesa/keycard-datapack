@@ -3,12 +3,8 @@ package fi.alavesa.keycards;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -105,50 +101,17 @@ public final class ReaderListener implements Listener {
         for (Block base : new Block[]{readerBlock, wallBlock}) {
             for (BlockFace face : HORIZONTAL) {
                 // Reader sits at eye height; check this Y and up to two below (door halves)
-                collectDoor(doorBottoms, base.getRelative(face));
-                collectDoor(doorBottoms, base.getRelative(face).getRelative(BlockFace.DOWN));
-                collectDoor(doorBottoms, base.getRelative(face).getRelative(0, -2, 0));
+                Doors.collectDoor(doorBottoms, base.getRelative(face));
+                Doors.collectDoor(doorBottoms, base.getRelative(face).getRelative(BlockFace.DOWN));
+                Doors.collectDoor(doorBottoms, base.getRelative(face).getRelative(0, -2, 0));
             }
         }
 
         // Double doors: the OTHER leaf sits one block further and never touches the reader
         // or its wall, so expand every found door with its mirrored pair (same facing,
         // opposite hinge) before opening.
-        for (Block bottom : doorBottoms.toArray(new Block[0])) {
-            Door door = (Door) bottom.getBlockData();
-            for (BlockFace face : HORIZONTAL) {
-                Block other = bottom.getRelative(face);
-                if (other.getType() != Material.IRON_DOOR) continue;
-                Door otherDoor = (Door) other.getBlockData();
-                if (otherDoor.getHalf() == Bisected.Half.BOTTOM
-                        && otherDoor.getFacing() == door.getFacing()
-                        && otherDoor.getHinge() != door.getHinge()) {
-                    doorBottoms.add(other);
-                }
-            }
-        }
-
-        int openTicks = plugin.getConfig().getInt("door-open-ticks", 30);
-        for (Block bottom : doorBottoms) {
-            setDoorOpen(bottom, true);
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> setDoorOpen(bottom, false), openTicks);
-        }
-    }
-
-    private void collectDoor(Set<Block> out, Block block) {
-        if (block.getType() != Material.IRON_DOOR) return;
-        Door door = (Door) block.getBlockData();
-        out.add(door.getHalf() == Bisected.Half.TOP ? block.getRelative(BlockFace.DOWN) : block);
-    }
-
-    private void setDoorOpen(Block bottom, boolean open) {
-        if (bottom.getType() != Material.IRON_DOOR) return;
-        Door door = (Door) bottom.getBlockData();
-        if (door.isOpen() == open) return;
-        door.setOpen(open);
-        bottom.setBlockData(door);
-        bottom.getWorld().playSound(bottom.getLocation(),
-            open ? Sound.BLOCK_IRON_DOOR_OPEN : Sound.BLOCK_IRON_DOOR_CLOSE, 1.0f, 1.0f);
+        Doors.expandDoublesInPlace(doorBottoms);
+        Doors.openThenClose(plugin, doorBottoms);
     }
 
     /** The wall is one block the OPPOSITE way from the reader's facing. */

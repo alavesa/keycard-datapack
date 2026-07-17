@@ -1,5 +1,5 @@
 name: Keycards
-version: '0.10.2'
+version: '0.11.0'
 main: fi.alavesa.keycards.KeycardsPlugin
 softdepend: [Labra]
 api-version: '1.21'
@@ -7,10 +7,13 @@ author: Piia Alavesa
 description: Companion plugin for the Keycards datapack (readers, doors, card menu, swipe animation).
 commands:
   keycards:
-    description: Open the keycard menu
-    usage: /keycards
+    description: Open the keycard menu, or manage keypad doors
+    usage: /keycards [keypad set <code>|keypad remove]
     aliases: [kc]
 permissions:
   keycards.admin:
     description: Open the keycard menu and grant cards of any clearance level
+    default: op
+  keycards.keypad:
+    description: Bind and remove secret keypad codes on doors
     default: op
