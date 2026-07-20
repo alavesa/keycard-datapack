@@ -1,5 +1,5 @@
 name: Keycards
-version: '0.11.0'
+version: '0.11.1'
 main: fi.alavesa.keycards.KeycardsPlugin
 softdepend: [Labra]
 api-version: '1.21'
