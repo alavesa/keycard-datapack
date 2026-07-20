@@ -3,7 +3,6 @@ version: '0.11.0'
 main: fi.alavesa.keycards.KeycardsPlugin
 softdepend: [Labra]
 api-version: '1.21'
-author: Piia Alavesa
 description: Companion plugin for the Keycards datapack (readers, doors, card menu, swipe animation).
 commands:
   keycards:

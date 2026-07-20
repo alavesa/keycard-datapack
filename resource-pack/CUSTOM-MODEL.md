@@ -23,7 +23,7 @@ the required level, so a glance tells you what card a door wants.
   combined-pack build merges the cases automatically.
 
 Defaults regenerate with `python3 tools/gen_models.py`. After any change:
-`/Users/piia/Lab/tools/build-pack.sh` (prints the sha1 for server.properties).
+`~/Lab/tools/build-pack.sh` (prints the sha1 for server.properties).
 
 Readers placed before this version keep the plain gray model; re-place them
 (or run the level's place function again) to get the colored light.
