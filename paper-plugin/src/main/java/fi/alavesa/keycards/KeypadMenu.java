@@ -40,13 +40,16 @@ public final class KeypadMenu implements Listener {
         this.store = store;
     }
 
-    /** Marks a keypad inventory and carries the door + typed digits + failed-attempt count. */
+    /** Marks a keypad inventory and carries the code-key block, the door-opening action, the
+     *  typed digits and the failed-attempt count. keyBlock is what the code is stored against
+     *  (a placed keypad's own block, or - legacy - the door itself); opener runs on a match. */
     private static final class Holder implements InventoryHolder {
         private Inventory inventory;
-        private final Block door;
+        private final Block keyBlock;
+        private final Runnable opener;
         private final StringBuilder entered = new StringBuilder();
         private int attempts;
-        private Holder(Block door) { this.door = door; }
+        private Holder(Block keyBlock, Runnable opener) { this.keyBlock = keyBlock; this.opener = opener; }
         @Override public Inventory getInventory() { return inventory; }
     }
 
@@ -58,8 +61,16 @@ public final class KeypadMenu implements Listener {
     private static final int ENTER_SLOT = 23;
     private static final int DISPLAY_SLOT = 4;
 
+    /** Legacy path: a keypad baked onto a door - the code lives on the door, and a match opens
+     *  that door. Kept so existing keypad doors still work after the rehaul. */
     public void open(Player player, Block door) {
-        Holder holder = new Holder(door);
+        open(player, door, () -> Doors.openThenClose(plugin, door));
+    }
+
+    /** Open the pad. {@code keyBlock} is what the code is checked against; {@code opener} runs on
+     *  a correct code (e.g. open the doors next to a placed keypad). */
+    public void open(Player player, Block keyBlock, Runnable opener) {
+        Holder holder = new Holder(keyBlock, opener);
         Inventory inv = Bukkit.createInventory(holder, 27,
             Component.text("Keypad", NamedTextColor.DARK_AQUA));
         holder.inventory = inv;
@@ -102,12 +113,12 @@ public final class KeypadMenu implements Listener {
 
     private void submit(Player player, Holder holder) {
         String code = holder.entered.toString();
-        Location loc = holder.door.getLocation().add(0.5, 0.5, 0.5);
-        if (!code.isEmpty() && store.matches(holder.door, code)) {
+        Location loc = holder.keyBlock.getLocation().add(0.5, 0.5, 0.5);
+        if (!code.isEmpty() && store.matches(holder.keyBlock, code)) {
             player.closeInventory();
             Msg.actionbar(player, Component.text("Access granted", NamedTextColor.GREEN));
             playConfigSound(loc, "grant");
-            Doors.openThenClose(plugin, holder.door);
+            holder.opener.run();
             return;
         }
         holder.attempts++;
